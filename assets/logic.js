@@ -22,13 +22,6 @@ const productos = [
     precio: 4000,
     imagen: "assets/images/ala.jpeg",
     cant: 1
-  },
-  {
-    id: "004",
-    nombre: "CHULETA DE POLLO (1M)",
-    precio: 5000,
-    imagen: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400",
-    cant: 1
   }
 ];
 
@@ -50,11 +43,12 @@ document.querySelectorAll("#menuprincipal a").forEach(link => {
 });
 
 function abrirMenu() {
-    overlay.style.display = "block";
+    cerrarCarrito()
     menuPrincipal.style.display = "flex";
     menuPrincipal.classList.add("abriendo");
     setTimeout(() => {
         menuPrincipal.classList.remove("abriendo");
+        overlay.style.display = "block";
     }, 400);
 }
 
@@ -219,6 +213,12 @@ opcionesPedido.forEach(o => {
         }
     })
 })
+
+document.getElementById("btn-carrito").addEventListener("click", (e) => {
+    e.preventDefault()
+    abrirCarrito();
+    renderCarrito();
+});
 
 document.getElementById("btn-carrito-mobile").addEventListener("click", () => {
     abrirCarrito();
