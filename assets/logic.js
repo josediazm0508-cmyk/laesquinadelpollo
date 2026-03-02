@@ -38,11 +38,9 @@ const menuPrincipal = document.getElementById("menuprincipal");
 
 btnMenu.addEventListener("click", abrirMenu);
 overlay.addEventListener("click", () =>{
-
     cerrarMenu()
     cerrarCarrito()
     modal_pedido.style.display = "none"
-
 });
 
 document.getElementById("btn-cancelar-pedido").addEventListener("click", cerrarModal)
@@ -55,7 +53,6 @@ function abrirMenu() {
     overlay.style.display = "block";
     menuPrincipal.style.display = "flex";
     menuPrincipal.classList.add("abriendo");
-    
     setTimeout(() => {
         menuPrincipal.classList.remove("abriendo");
     }, 400);
@@ -71,16 +68,15 @@ function cerrarMenu() {
 }
 
 function cerrarModal(){
-
-    modal_pedido.style.display = "none"
-    overlay.style.display = "none"
-
+    modal_pedido.classList.remove("active");
+    setTimeout(() => {
+        modal_pedido.style.display = "none"
+        overlay.style.display = "none"
+    }, 300);
 }
 
 function renderProds(){
-
     const contenedor = document.getElementById("opcionesmenu")
-
     productos.forEach(prod => {
     contenedor.innerHTML += `
         <div class="tarjetaprod">
@@ -96,116 +92,144 @@ function renderProds(){
         </div>
     `;
     });
-
 }
 
 let carrito;
+
+// =============================================
+// PEDIDO: estado centralizado para el modal
+// =============================================
+let pedidoItems = []; // [{ id, cant }]
+let pedidoOrigen = ""; // "directo" | "carrito"
+
+function calcularTotalPedido() {
+    return pedidoItems.reduce((acc, item) => {
+        const prod = productos.find(p => p.id === item.id);
+        return acc + prod.precio * item.cant;
+    }, 0);
+}
+
+function renderPedidoModal() {
+    const divpedido = document.getElementById("pedido");
+    divpedido.innerHTML = "";
+
+    pedidoItems.forEach(item => {
+        const prod = productos.find(p => p.id === item.id);
+
+        const el = document.createElement("div");
+        el.classList.add("item-carrito");
+        el.innerHTML = `
+            <div class="item-info">
+                <h4>${prod.nombre}</h4>
+                <span>$${(prod.precio * item.cant).toLocaleString("es-CO")}</span>
+            </div>
+            <div class="cantidad-control">
+                <button class="btn-restar-pedido" data-id="${item.id}">-</button>
+                <span class="cantidad-pedido">${item.cant}</span>
+                <button class="btn-sumar-pedido" data-id="${item.id}">+</button>
+            </div>
+            <button class="btn-eliminar-pedido" data-id="${item.id}">🗑</button>
+        `;
+        divpedido.appendChild(el);
+    });
+
+    document.getElementById("totalPedido").textContent =
+        "$" + calcularTotalPedido().toLocaleString("es-CO");
+
+    // Eventos de cantidad y eliminar dentro del modal pedido
+    divpedido.querySelectorAll(".btn-sumar-pedido").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const item = pedidoItems.find(p => p.id === btn.dataset.id);
+            if (item) { item.cant++; renderPedidoModal(); }
+        });
+    });
+
+    divpedido.querySelectorAll(".btn-restar-pedido").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const item = pedidoItems.find(p => p.id === btn.dataset.id);
+            if (item) {
+                if (item.cant > 1) {
+                    item.cant--;
+                } else {
+                    pedidoItems = pedidoItems.filter(p => p.id !== btn.dataset.id);
+                }
+                renderPedidoModal();
+            }
+        });
+    });
+
+    divpedido.querySelectorAll(".btn-eliminar-pedido").forEach(btn => {
+        btn.addEventListener("click", () => {
+            pedidoItems = pedidoItems.filter(p => p.id !== btn.dataset.id);
+            renderPedidoModal();
+        });
+    });
+}
+
+function abrirModalPedido() {
+    overlay.style.display = "block";
+    modal_pedido.style.display = "flex";
+    setTimeout(() => {
+        modal_pedido.classList.add("active");
+    }, 10);
+    renderPedidoModal();
+}
 
 document.addEventListener("DOMContentLoaded", () => {
 
     renderProds()
 
     const botones_pedido = document.querySelectorAll(".btn-pedir-ahora")
-
     botones_pedido.forEach(b => {
-
         b.addEventListener("click", () => {
-
-            let total = 0;
-            const divpedido = document.getElementById("pedido");
-            divpedido.innerHTML = ""
-            overlay.style.display = "block";
-            modal_pedido.style.display = "flex";
-            setTimeout(() => {
-                modal_pedido.classList.add("active");
-            }, 10);
-            modal_pedido.classList.remove("active");
-            const pedido = [];
-            pedido.push(b.dataset.idprod)
-            
-            pedido.forEach(e => {
-
-                const prod = productos.find(p => p.id === e)
-
-                const lista = document.createElement("ul")
-                const nombreProd = document.createElement("li")
-                nombreProd.textContent = prod.nombre + " x " + prod.cant;
-                lista.appendChild(nombreProd)
-
-                total += prod.precio * prod.cant;
-
-                divpedido.appendChild(lista)
-                document.getElementById("totalPedido").textContent = "$" + total.toLocaleString("es-CO")
-
-            })
-
-        })
-
-    })
+            const idProd = b.dataset.idprod;
+            pedidoOrigen = "directo";
+            pedidoItems = [{ id: idProd, cant: 1 }];
+            abrirModalPedido();
+        });
+    });
 
     carrito = localStorage.getItem("carrito") ? JSON.parse(localStorage.getItem("carrito")) : []
 
     const botonesAgregar = document.querySelectorAll(".btn-add-car");
-
     botonesAgregar.forEach(btn => {
-
         btn.addEventListener("click", () => {
-
             const id = btn.dataset.idprod;
-
             const existe = carrito.find(p => p.id === id);
-
             if(existe){
                 existe.cant += 1;
             } else {
                 carrito.push({ id: id, cant: 1 });
             }
-
             localStorage.setItem("carrito", JSON.stringify(carrito));
         });
-
     });
 
 })
 
 const opcionesPedido = document.querySelectorAll('[name="opcion-pedido"]');
-
 opcionesPedido.forEach(o => {
-
     o.addEventListener("change", ()=> {
-
         if(o.checked){
-
             if(o.id === "domicilio") {
-
                 document.getElementById("direccionInput").style.display = "flex"
-
             } else {
-
                 document.getElementById("direccionInput").style.display = "none"
-
             }
-
         }
-
     })
-
 })
 
-document.getElementById("btn-carrito").addEventListener("click", (e) => {
-
-    e.preventDefault();
+document.getElementById("btn-carrito-mobile").addEventListener("click", () => {
     abrirCarrito();
     renderCarrito();
-
-})
+});
 
 const modalCarrito = document.getElementById("modal-carrito");
 
 function abrirCarrito() {
     overlay.style.display = "block";
     modalCarrito.style.display = "flex";
-    
     setTimeout(() => {
         modalCarrito.classList.add("active");
     }, 10);
@@ -213,7 +237,6 @@ function abrirCarrito() {
 
 function cerrarCarrito() {
     modalCarrito.classList.remove("active");
-
     setTimeout(() => {
         modalCarrito.style.display = "none";
         overlay.style.display = "none";
@@ -221,7 +244,6 @@ function cerrarCarrito() {
 }
 
 function renderCarrito(){
-
     const contenedor = document.getElementById("carrito");
     contenedor.innerHTML = "";
 
@@ -233,7 +255,6 @@ function renderCarrito(){
     let compra = 0;
 
     carrito.forEach(p => {
-
         const prod = productos.find(e => e.id === p.id);
         const total = prod.precio * p.cant;
         compra += total
@@ -244,34 +265,27 @@ function renderCarrito(){
                     <h4>${prod.nombre}</h4>
                     <span>$${total.toLocaleString("es-CO")}</span>
                 </div>
-
                 <div class="cantidad-control">
                     <button data-id="${p.id}" class="btn-restar">-</button>
                     <span>${p.cant}</span>
                     <button data-id="${p.id}" class="btn-sumar">+</button>
                 </div>
-
                 <button data-id="${p.id}" class="btn-eliminar">🗑</button>
             </div>
         `;
     });
 
-    contenedor.innerHTML += `<div>
-                              <h3>Total: $${compra.toLocaleString("es-CO")}</h3>
-                          </div>`
+    contenedor.innerHTML += `<div><h3>Total: $${compra.toLocaleString("es-CO")}</h3></div>`
 
     activarEventosCarrito();
 }
 
 function activarEventosCarrito(){
-
     document.querySelectorAll(".btn-sumar").forEach(btn => {
         btn.addEventListener("click", () => {
             const id = btn.dataset.id;
-
             const prod = carrito.find(p => p.id === id);
             prod.cant += 1;
-
             localStorage.setItem("carrito", JSON.stringify(carrito));
             renderCarrito();
         });
@@ -280,15 +294,12 @@ function activarEventosCarrito(){
     document.querySelectorAll(".btn-restar").forEach(btn => {
         btn.addEventListener("click", () => {
             const id = btn.dataset.id;
-
             const prod = carrito.find(p => p.id === id);
-
             if(prod.cant > 1){
                 prod.cant -= 1;
             } else {
                 carrito = carrito.filter(p => p.id !== id);
             }
-
             localStorage.setItem("carrito", JSON.stringify(carrito));
             renderCarrito();
         });
@@ -297,9 +308,7 @@ function activarEventosCarrito(){
     document.querySelectorAll(".btn-eliminar").forEach(btn => {
         btn.addEventListener("click", () => {
             const id = btn.dataset.id;
-
             carrito = carrito.filter(p => p.id !== id);
-
             localStorage.setItem("carrito", JSON.stringify(carrito));
             renderCarrito();
         });
@@ -307,51 +316,28 @@ function activarEventosCarrito(){
 }
 
 document.getElementById("btn-cerrar-carrito").addEventListener("click", cerrarCarrito);
+
 document.getElementById("btn-pedir-carrito").addEventListener("click", ()=> {
-
-    cerrarCarrito()  
-
+    if(carrito.length === 0) return;
+    cerrarCarrito();
     setTimeout(() => {
-        
-        let total = 0;
-        const divpedido = document.getElementById("pedido");
-        divpedido.innerHTML = ""
-        overlay.style.display = "block";
-        modal_pedido.style.display = "flex";
-        setTimeout(() => {
-            modal_pedido.classList.add("active");
-        }, 10);
-        modal_pedido.classList.remove("active");
-        const pedido = carrito;
-
-        pedido.forEach(e => {
-
-            const prod = productos.find(p => p.id === e.id)
-            prod.cant = e.cant
-
-            const lista = document.createElement("ul")
-            const nombreProd = document.createElement("li")
-            nombreProd.textContent = prod.nombre + " x " + prod.cant;
-            lista.appendChild(nombreProd)
-
-            total += prod.precio * prod.cant;
-
-            divpedido.appendChild(lista)
-            document.getElementById("totalPedido").textContent = "$" + total.toLocaleString("es-CO")
-
-        })
-
-    }, 500);
-
+        pedidoOrigen = "carrito";
+        // Copiamos el carrito en pedidoItems para poder editar independientemente
+        pedidoItems = carrito.map(e => ({ id: e.id, cant: e.cant }));
+        abrirModalPedido();
+    }, 400);
 })
 
 document.getElementById("btn-pedir").addEventListener("click", ()=> {
+    if(pedidoItems.length === 0){
+        alert("No hay productos en el pedido.");
+        return;
+    }
 
     const esDomicilio = document.getElementById("domicilio").checked;
     const direccionInput = document.getElementById("direccionPedido");
     const metodoPago = document.querySelector('[name="metodo-pago"]:checked').parentElement.textContent.trim();
 
-    // 🔴 VALIDACIÓN DE DIRECCIÓN
     if(esDomicilio && direccionInput.value.trim() === ""){
         alert("Por favor ingresa la dirección para el domicilio.");
         return;
@@ -361,30 +347,14 @@ document.getElementById("btn-pedir").addEventListener("click", ()=> {
     mensaje += "🧾 *Pedido:*\n";
 
     let total = 0;
-
-    // Usamos el carrito si existe, si no es pedido directo
-    let pedidoFinal = carrito.length > 0 ? carrito : [];
-
-    // Si viene de "Pedir Ahora"
-    if(pedidoFinal.length === 0){
-        const items = document.querySelectorAll("#pedido li");
-        items.forEach(li => {
-            mensaje += "• " + li.textContent + "\n";
-        });
-
-        total = parseInt(document.getElementById("totalPedido").textContent.replace(/\D/g,''));
-    } else {
-        pedidoFinal.forEach(e => {
-            const prod = productos.find(p => p.id === e.id);
-            const subtotal = prod.precio * e.cant;
-            total += subtotal;
-
-            mensaje += `• ${prod.nombre} x ${e.cant}\n`;
-        });
-    }
+    pedidoItems.forEach(item => {
+        const prod = productos.find(p => p.id === item.id);
+        const subtotal = prod.precio * item.cant;
+        total += subtotal;
+        mensaje += `• ${prod.nombre} x ${item.cant} = $${subtotal.toLocaleString("es-CO")}\n`;
+    });
 
     mensaje += "\n💰 *Total:* $" + total.toLocaleString("es-CO") + "\n";
-
     mensaje += "\n🚚 *Tipo de pedido:* ";
     mensaje += esDomicilio ? "Domicilio\n" : "Recoger en tienda\n";
 
@@ -394,19 +364,15 @@ document.getElementById("btn-pedir").addEventListener("click", ()=> {
 
     mensaje += "\n💳 *Método de pago:* " + metodoPago;
 
-    // 📲 Número de WhatsApp (SIN espacios ni +)
-    const numero = "573217013712"; // cámbialo si necesitas
-
+    const numero = "573217013712";
     const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
-
-    // 🔥 Abrir WhatsApp
     window.open(url, "_blank");
 
-    // 🧹 LIMPIAR CARRITO
+    // Limpiar
     carrito = [];
     localStorage.removeItem("carrito");
+    pedidoItems = [];
 
-    // Limpiar interfaz
     document.getElementById("pedido").innerHTML = "";
     document.getElementById("totalPedido").textContent = "";
     direccionInput.value = "";

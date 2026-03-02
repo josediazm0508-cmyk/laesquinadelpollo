@@ -406,15 +406,17 @@ footer p {
     margin-bottom: 5vh;
 }
 
-
-#modal-pedido div{
+#modal-pedido div:not(.item-carrito){
     display: flex;
     flex-direction: column;
 }
-
 #modal-pedido ul{
     margin-left: 5%;
     list-style: none;
+}
+
+#pedido{
+    gap: 20px;
 }
 
 /* RESPONSIVE - TABLET */
@@ -666,6 +668,7 @@ footer p {
 /* CONTROLES CANTIDAD */
 .cantidad-control {
     display: flex;
+    flex-direction: row !important;
     align-items: center;
     gap: 8px;
 }
@@ -803,4 +806,28 @@ footer p {
 .botones-carrito::-webkit-scrollbar-thumb {
     background-color: var(--accent-);
     border-radius: 10px;
+}
+
+#nav-actions{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#btn-carrito-mobile{
+    background: transparent;
+    border: none;
+    color: var(--accent-);
+    font-size: 28px;
+    cursor: pointer;
+}
+
+#btn-carrito-mobile:hover{
+    transform: scale(1.1);
+}
+
+@media (min-width: 768px){
+    #btn-carrito-mobile{
+        display: none;
+    }
 }
