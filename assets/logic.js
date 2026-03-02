@@ -336,12 +336,14 @@ document.getElementById("btn-pedir").addEventListener("click", ()=> {
 
     const esDomicilio = document.getElementById("domicilio").checked;
     const direccionInput = document.getElementById("direccionPedido");
+    direccionInput.classList.remove("errorInput")
     const metodoPago = document.querySelector('[name="metodo-pago"]:checked').parentElement.textContent.trim();
 
     if(esDomicilio && direccionInput.value.trim() === ""){
-        alert("Por favor ingresa la dirección para el domicilio.");
+        direccionInput.classList.add("errorInput")
         return;
     }
+    
 
     let mensaje = "🍗 *LA ESQUINA DEL POLLO* 🍗\n\n";
     mensaje += "🧾 *Pedido:*\n";
@@ -378,4 +380,8 @@ document.getElementById("btn-pedir").addEventListener("click", ()=> {
     direccionInput.value = "";
 
     cerrarModal();
+});
+
+document.getElementById("direccionPedido").addEventListener("input", function(){
+    this.classList.remove("errorInput");
 });

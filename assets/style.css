@@ -419,6 +419,15 @@ footer p {
     gap: 20px;
 }
 
+#direccionPedido{
+    transition: 0.2s ease;
+}
+
+#direccionPedido.errorInput{
+    border-color: #ff4d4d;
+    box-shadow: 0 0 8px rgba(255, 77, 77, 0.6);
+}
+
 /* RESPONSIVE - TABLET */
 @media (min-width: 768px) {
     #btn_menu {
