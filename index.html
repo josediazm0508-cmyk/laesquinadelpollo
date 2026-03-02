@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LA ESQUINA DEL POLLO</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+</head>
+<body>
+    
+    <nav id="navbar">
+        <div>
+            <img id="imgprincipal" src="assets/images/logo.png" alt="La esquina del pollo Logo">
+        </div>
+
+        <button id="btn_menu"><i class="bi bi-list"></i></button>
+
+        <div id="menuprincipal">
+            <a href="#menu">
+                <div class="opcionmenu">
+                    <i class="bi bi-cup-straw"></i>
+                    <p>Menú</p>
+                </div>
+            </a>
+            <a href="#ubicacion">
+                <div class="opcionmenu">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <p>Ubicación</p>
+                </div>
+            </a>
+            <a href="#contacto">
+                <div class="opcionmenu">
+                    <i class="bi bi-telephone-fill"></i>
+                    <p>Contacto</p>
+                </div>
+            </a>
+            <a href="#horario">
+                <div class="opcionmenu">
+                    <i class="bi bi-clock-fill"></i>
+                    <p>Horarios</p>
+                </div>
+            </a>
+            <a href="#" id="btn-carrito">
+                <div class="opcionmenu">
+                    <i class="bi bi-cart-fill"></i>
+                    <p>Carrito</p>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+    <section id="hero-section">
+        <div id="currentimg">
+            <video src="assets/images/videoPollo.mp4" autoplay muted loop></video>
+        </div>
+        <div class="hero-overlay">
+            <h1>LA ESQUINA DEL POLLO</h1>
+            <p>La mejor opción para tus antojos</p>
+        </div>
+    </section>
+
+    <section id="menu" class="seccion">
+        <h2>Nuestro Menú</h2>
+        <div id="opcionesmenu">
+
+        </div>
+    </section>
+
+    <section id="ubicacion" class="seccion">
+        <h2>📍 Ubicación</h2>
+        <h3>Calle 18 #22-72 Barrio: San Judas, Timbio-Cauca</h3>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d249.15311278639786!2d-76.68671661491206!3d2.3545662909421123!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2fe31cc708dc1f%3A0xa6b755bd9f75d620!2sDulce%20vainilla!5e0!3m2!1ses-419!2sco!4v1772315288872!5m2!1ses-419!2sco" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </section>
+
+    <section id="contacto" class="seccion">
+        <h2>¡Contáctanos!</h2>
+        <a href="https://l.instagram.com/?u=https%3A%2F%2Fwa.me%2Fc%2F573154725887%3Futm_source%3Dig%26utm_medium%3Dsocial%26utm_content%3Dlink_in_bio%26fbclid%3DPAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnS4H3GR604r8LVr_CaxlUpbSQ4QF5OWPUgpE6tLleXFgCk1bR7ZaS8hBuRJ4_aem_QglNHDoi99BrrPWDcj4piQ&e=AT2fr6hbumDNv1oaTim1e59m8zl4ulPFi-cU9vJhHHw6_vMyN3Yll4fqOoVY6SDL955S6xKwP89vDsoez2FRbPkY219dNDKCZAg7AlBkfQ" target="_blank">
+            <button id="btn_wsp">
+                <i class="bi bi-whatsapp"></i> WhatsApp
+            </button>
+        </a>
+        <a href="https://www.instagram.com/prints_popayan/" target="_blank">
+            <button id="btn_ig">
+                <i class="bi bi-instagram"></i> Instagram
+            </button>
+        </a>
+    </section>
+
+    <section id="horario" class="seccion">
+        <h2>⏰ Horario</h2>
+        <h3>De Lunes a Viernes</h3>
+        <h3>3:00 PM - 9:00 PM</h3>
+    </section>
+
+    <footer>
+        <img src="assets/images/logo.png" alt="La esquina del pollo Logo">
+        <p>© <span id="year"></span> Desarrollado por Jose Diaz</p>
+    </footer>
+
+    <div id="overlay"></div>
+
+    <div id="modal-pedido">
+        <h2>Tu pedido</h2>
+        <div id="pedido">
+
+        </div>
+        <div>
+            <h3>Tipo de Pedido:</h3>
+            <label>
+                <input type="radio" name="opcion-pedido" id="domicilio" checked>
+                Pedir a domicilio
+            </label>
+            <label>
+                <input type="radio" name="opcion-pedido" id="recoger">
+                Recoger mi pedido
+            </label>
+            <label style="display: flex; flex-direction: column;" id="direccionInput">
+                Dirección:
+                <input type="text" placeholder="Ingrese la dirección para el domicilio" id="direccionPedido">
+            </label>
+        </div>
+        <div>
+            <h3>Método de Pago:</h3>
+            <label>
+                <input type="radio" name="metodo-pago" id="" checked>
+                Efectivo
+            </label>
+            <label>
+                <input type="radio" name="metodo-pago" id="">
+                Transferencia
+            </label>
+        </div>
+        <div>
+            <h3>Total: <span id="totalPedido"></span></h3>
+            <h4>(La opción de domicilio aumenta este valor)</h4>
+        </div>
+        <div class="botones-pedido">
+            <button id="btn-cancelar-pedido">Cancelar</button>
+            <button id="btn-pedir">Pedir</button>
+        </div>
+    </div>
+
+    <div id="modal-carrito">
+        <h2>Carrito</h2>
+        <div id="carrito">
+
+        </div>
+        <div>
+            <div class="botones-carrito">
+                <button id="btn-cerrar-carrito">Cerrar</button>
+                <button id="btn-pedir-carrito">Pedir</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/logic.js"></script>
+</body>
+</html>
